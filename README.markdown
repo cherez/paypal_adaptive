@@ -17,7 +17,7 @@ Create paypal_adaptive.yml to your config folder:
       password: "sandbox_password"
       signature: "sandbox_signature"
       application_id: "sandbox_app_id"
-      ssl_cert_file:
+      api_cert_file:
 
     test:
       environment: "sandbox"
@@ -25,7 +25,7 @@ Create paypal_adaptive.yml to your config folder:
       password: "sandbox_password"
       signature: "sandbox_signature"
       application_id: "sandbox_app_id"
-      ssl_cert_file:
+      api_cert_file: "/path/to_cert"
 
     production:
       environment: "production"
@@ -33,7 +33,7 @@ Create paypal_adaptive.yml to your config folder:
       password: "my_production_password"
       signature: "my_production_signature"
       application_id: "my_production_app_id"
-      ssl_cert_file:
+      api_cert_file: "/path/to_cert"
 
 You can also use ENV variables when specifying your configuration. eg.
 ```<%= ENV[''paypal.username'] %>```
@@ -76,6 +76,11 @@ Additionally, you can make calls to Paypal Adaptive's other APIs:
 
 Input is just a Hash just like the pay method. Refer to the Paypal manual for more details.
 
+### Using the embedded payment flow
+Instead of redirecting to the url from ```redirect_to pay_response.approve_paypal_payment_url``` you can generate the action url for your
+form by using ```pay_response.approve_paypal_payment_url 'MY TYPE' ``` The two types that are supported for embedded payment are 'light' and 'mini'
+More information about these types can be found here https://cms.paypal.com/us/cgi-bin/?cmd=_render-content&content_ID=developer/e_howto_api_APIntro
+
 ### Certificate validation
 You can set the location of the key file you downloaded from PayPal, in paypal_adaptive.yml
 for each environment, e.g.:
@@ -86,11 +91,23 @@ for each environment, e.g.:
       password: "sandbox_password"
       signature: "sandbox_signature"
       application_id: "sandbox_app_id"
-      ssl_cert_file: "/path/to/your/private.key"
+      api_cert_file: "/path/to/your/private.key"
 
-The ssl_cert_file should point to your cert_key_pem.txt that is downloaded through the paypal developer interface. It will contain a section that specifies the RSA private key and another section that specifies a certificate. If this is left empty, paypal_adaptive will attempt to use the signature method of validation with PayPal, so your signature config must not be nil.
+The api_cert_file should point to your cert_key_pem.txt that is downloaded through the paypal developer interface. It will contain a section that specifies the RSA private key and another section that specifies a certificate. If this is left empty, paypal_adaptive will attempt to use the signature method of validation with PayPal, so your signature config must not be nil.
 
 ## Changelog
+0.3.4 
+Locale specific paypal urls and improved testing. changed approve_paypal_payment_url method signature with deprecation warning. thanks mreinsch.
+
+0.3.3
+Handle JSON parsing error. Added validation for config.
+
+0.3.2
+Added support to api certificate since ssl_cert_file config is now used to set CA Authority. thanks jimbocortes
+
+0.3.1
+Update json dependency to use ~>1.0 so any version 1.X will work.
+
 0.3.0
 ssl_cert_file fixes from eddroid. get_verified_status function from bundacia.
 
